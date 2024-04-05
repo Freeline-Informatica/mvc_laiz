@@ -1,23 +1,23 @@
-<?php
+<?php 
 require 'environment.php';
 
-define("BASE_URL", "http://localhost/php7/mvc_laiz/");
-
 global $config;
+global $db;
+
 $config = array();
-if(ENVIRONMENT == 'development') {
-    $config['dbname'] = 'mvc_laiz';
+if (ENVIRONMENT == 'development'){
+    define('BASE_URL', "http://localhost/php7/estoque_laiz/");
+    $config['dbname'] = 'estoque_laiz';
     $config['host'] = '192.168.1.200';
     $config['dbuser'] = 'root';
     $config['dbpass'] = '';
 } else {
-    $config['dbname'] = 'mvc_laiz';
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $config['dbname'] = 'nova_loja';
     $config['host'] = '192.168.1.200';
     $config['dbuser'] = 'root';
     $config['dbpass'] = '';
 }
 
-global $db;
-
-$db = new PDO("mysql:dbname=".$config['dbname'].";host=".$config['host'].';charset=latin1', $config['dbuser'], $config['dbpass'],array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES latin1"));
-
+$db = new PDO("mysql:dbname=".$config['dbname'].";host=".$config['host'], $config['dbuser'], $config['dbpass']);
+$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

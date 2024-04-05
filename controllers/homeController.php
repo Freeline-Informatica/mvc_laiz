@@ -1,17 +1,10 @@
 <?php
-class homeController extends controller {
+class homeController extends Controller {
 
-    // public function __construct(){
-    //     parent::__construct();
-    // }
+    public function index() {
+        $data = array();
 
-    public function index(){
-        $array = array();
-        
-        $videos = new videos();
-        $array['videos'] = $videos->getList(4);
-
-        $this->loadTemplate("home", $array);
-
+        $this->loadTemplate('home', $data);
     }
+
 }
