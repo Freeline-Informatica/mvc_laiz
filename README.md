@@ -14,6 +14,10 @@
 
 #
 
+# BASE
+
+#
+
 ## .htacess
 
 * para afunilar tudo que o usuário acessa para o index, é necessário o .htacess
@@ -92,6 +96,82 @@
 #
 
 ## Core.php
-## núcleo
+### núcleo
+é responsável por controlar o roteamento das requisições HTTP em um aplicativo web baseado em PHP, determinando qual controlador e ação deve ser executado com base na URL requisitada
 
-`l`
+         <?php
+         class Core {                                                         // a classe Core é responsável por inicializar e executar a lógica central
+         
+         	public function run() {                                           // obtém a URL requisitada, ou define como '/' caso não seja especificada
+                 $url = '/'.(isset($_GET['url'])?$_GET['url']:'');
+         
+         		$params = array();                                             // inicializa um array para os parâmetros da URL
+           
+         		if(!empty($url) && $url != '/') {                              
+         			$url = explode('/', $url);
+         			array_shift($url);
+         
+         			$currentController = $url[0].'Controller';                  //o primeiro segmento da URL é considerado o nome do controlador
+         			array_shift($url);
+         
+         			if(isset($url[0]) && $url[0] != '/') {                      // se houver um próximo segmento na URL, ele é considerado a ação do controlador
+         				$currentAction = $url[0];
+         				array_shift($url);
+         			} else {
+         				$currentAction = 'index';                                // a ação padrão é 'index'
+         			}
+                                                            
+         			if(count($url) > 0) {                                       // qualquer segmento restante na URL é considerado como parâmetros  
+         				$params = $url;      
+         			}
+                                                                              // como: /home/edit/3
+                                                                              o número 3 é parâmetro, edit é a ação do controlador e home é o nome do controlador
+         		} else {
+         			$currentController = 'homeController';                     // URL vazia = controlador padrão definido como 'homeController' e a ação padrão como 'index'
+         			$currentAction = 'index';
+         		}
+                     
+         		if(!file_exists('controllers/'.$currentController.'.php')) {  // se o controlador não existir, define o controlador de erro padrão
+         			$currentController = 'notFoundController'; 
+         			$currentAction = 'index';
+         		}
+         
+         		$c = new $currentController();                                // fornece o controlador apropriado
+         
+         		if(!method_exists($c, $currentAction)) {                      // ve se a ação especificada dentro do controlador existe, senão, utiliza a ação padrão
+         			$currentAction = 'index';
+         		}
+         		call_user_func_array(array($c, $currentAction), $params);     // puxa a ação do controlador com os parâmetros fornecidos
+         	}
+
+         }
+
+#
+
+## Controller.php
+### controlador principal
+
+         <?php
+         class Controller {                                                      // setar a classe Controler
+         
+         	protected $db;                                                       
+         
+         	public function __construct() {
+         		global $config;
+         	}
+         	
+         	public function loadView($viewName, $viewData = array()) {
+         		extract($viewData);
+         		include 'views/'.$viewName.'.php';
+         	}
+         
+         	public function loadTemplate($viewName, $viewData = array()) {
+         		include 'views/template.php';
+         	}
+         
+         	public function loadViewInTemplate($viewName, $viewData) {
+         		extract($viewData);
+         		include 'views/'.$viewName.'.php';
+         	}
+         
+         }
