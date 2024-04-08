@@ -15,12 +15,21 @@ class loginController extends Controller{
             if($users->verifyUser($unumber, $upass)){
                 $token = $users->createToken($unumber);
                 $_SESSION['token'] = $token;
+
+                header("Location: ".BASE_URL);
+                exit;
             } else {
                 $data['msg'] = 'Número e/ou senha errados!';
             }
         }
 
         $this ->loadView('login', $data);
+    }
+
+    public function sair(){
+        unset($_SESSION['token']);
+        header("Location: ".BASE_URL."login");
+        exit;
     }
 
 }

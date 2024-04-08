@@ -6,7 +6,7 @@ global $db;
 
 $config = array();
 if (ENVIRONMENT == 'development'){
-    define('BASE_URL', "http://localhost/php7/estoque_laiz/");
+    define('BASE_URL', "http://localhost/php7/mvc_laiz/");
     $config['dbname'] = 'estoque_laiz';
     $config['host'] = '192.168.1.200';
     $config['dbuser'] = 'root';
