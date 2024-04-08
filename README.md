@@ -14,6 +14,39 @@
 
 #
 
+# SEG
+
+* assets
+  * css
+    * style.css
+  * imgs
+  * js
+    * script.js
+      
+* controllers
+  * homeController.php
+  * notFoundController.php
+    
+* core
+  * Controller.php
+  * Core.php
+  * Model.php
+ 
+* helpers
+   * ExHelper.php
+
+* models
+  * User.php
+
+* views
+  * login.php
+  * home.php
+  * template.php
+ 
+.htaccess, config.php, enviornmenti.php, index.php... na raíz do projeto
+
+#
+
 # BASE
 
 #
@@ -150,28 +183,157 @@
 
 ## Controller.php
 ### controlador principal
+é uma classe base para outros controladores no aplicativo
 
          <?php
-         class Controller {                                                      // setar a classe Controler
+         class Controller {                                                      // setar a classe Controler 
          
-         	protected $db;                                                       
-         
-         	public function __construct() {
+         	protected $db;                                             // criação de uma propriedade protegida chamada $db, se refere a uma conexão com o banco de dados.                                                     
+         	public function __construct() { '                          // essa função "construtora" recebe a configuração global
          		global $config;
          	}
          	
-         	public function loadView($viewName, $viewData = array()) {
-         		extract($viewData);
-         		include 'views/'.$viewName.'.php';
+         	public function loadView($viewName, $viewData = array()) {         // essa função é utilizada dentro dos controllers (mostrados mais a frente)... a função é responsável por carregar na view e passar dados para ela
+         		extract($viewData);                                             // extrai os dados da view para que possam ser acessados
+         		include 'views/'.$viewName.'.php';                              // inclue os dados da view especificada
          	}
          
-         	public function loadTemplate($viewName, $viewData = array()) {
-         		include 'views/template.php';
+         	public function loadTemplate($viewName, $viewData = array()) {      // essa função é responsável por carregar um template que contém a estrutura da página
+         		include 'views/template.php';                                    // basicamente inclui o arquivo do template que contém a estrutura HTML básica
          	}
          
-         	public function loadViewInTemplate($viewName, $viewData) {
-         		extract($viewData);
-         		include 'views/'.$viewName.'.php';
+         	public function loadViewInTemplate($viewName, $viewData) {           // essa função é responsável por carregar uma view dentro de um template
+               extract($viewData);                                               // essa linha extrai os dados da view para que possam ser acessados
+         		include 'views/'.$viewName.'.php';                                // inclui o arquivo da view especificada dentro do template
          	}
          
          }
+
+#
+
+## Model
+### modelo base
+é uma classe base para outros modelos no aplicativo
+
+         <?php
+         class Model {                            // setar a classe Model
+         	
+         	protected $db;                        
+         
+         	public function __construct() {
+         		global $db;                       // a função construtor recebe uma instância do objeto de conexão com o banco de dados global
+         		$this->db = $db;                  // define a propriedade protegida $db como o pedido do objeto de conexão com o banco de dados global
+         	}
+         }
+
+#
+
+## homeContrller
+### exemplo de controller
+
+         <?php
+         class homeController extends Controller {
+         
+             private $user;
+         
+             public function __construct(){
+                 parent::__construct();
+         
+                 $this->user = new Users();
+                 if(!$this->user->checkLogin()){                     
+                     header("Location: ".BASE_URL."login");
+                     exit;
+                 }
+             }
+         
+             public function index() {
+                 $data = array(
+         
+                     'menu' => array(
+                         BASE_URL.'home/add' => 'Adcionar Produto',
+                         BASE_URL.'home/relatorio' => 'Relatório',
+                         BASE_URL.'login/sair' => 'Sair'
+                     )
+         
+                 );
+                 $p = new Products();
+         
+                 $s = '';
+         
+                 if(!empty($_GET['busca'])){
+                     $s = $_GET['busca'];
+                 }
+         
+                 $data['list'] = $p->getProducts($s);
+         
+                 $this->loadTemplate('home', $data);
+             }
+         
+             public function add(){
+                 $data = array(
+                     'menu' => array (
+                         BASE_URL => 'Voltar'
+                     )
+                 );
+                 $p = new Products();
+                 $filters = new FiltersHelper();
+         
+                 if(!empty($_POST['cod'])){
+                     $cod = filter_input(INPUT_POST, 'cod', FILTER_VALIDATE_INT);
+                     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+                     $price = $filters->filter_post_money('price');
+                     $quantity = $filters->filter_post_money('quantity');
+                     $min_quantity = $filters->filter_post_money('min_quantity');
+         
+         
+                     if($cod && $name && $price && $quantity && $min_quantity) {
+                         $p->addProduct($cod, $name, $price, $quantity, $min_quantity);
+         
+                         header("Location: ".BASE_URL);
+                         exit;
+                     } else {
+                         $data['warning'] = 'digite os campos corretamente';
+                     }
+                 }
+         
+                 $this->loadTemplate('add', $data);
+         
+             }
+         
+         
+         
+             public function edit($id){
+                 $data = array(
+                     'menu' => array (
+                         BASE_URL => 'Voltar'
+                     )
+                 );
+                 $p = new Products();
+                 $filters = new FiltersHelper();
+         
+                 if(!empty($_POST['cod'])){
+                     $cod = filter_input(INPUT_POST, 'cod', FILTER_VALIDATE_INT);
+                     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+                     $price = $filters->filter_post_money('price');
+                     $quantity = $filters->filter_post_money('quantity');
+                     $min_quantity = $filters->filter_post_money('min_quantity');
+         
+         
+                     if($cod && $name && $price && $quantity && $min_quantity) {
+                         $p->editProduct($cod, $name, $price, $quantity, $min_quantity, $id);
+                      
+                         header("Location: ".BASE_URL);
+                     exit;
+                     } else {
+                         $data['warning'] = 'digite os campos corretamente';
+                     }
+         
+                 }
+         
+                 $data['info'] = $p->getProduct($id);
+         
+                 $this->loadTemplate('edit', $data);
+         
+             }
+         
+}
