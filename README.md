@@ -61,9 +61,7 @@
 
 `RewriteCond %{REQUEST_FILENAME} !-d`	-> condiciona: se acessar o nome de um diretório real, ele vai ser acessado
 
-`RewriteRule ^(.*)$ /mvc/index.php/$1 [L]`	-> caso não seja acessado nada
-
-`RewriteRule ^(.*)$ /mvc/index.php/$1 [L]`	-> se a condição for falsa, ele ira redirecionar para o index
+`RewriteRule ^(.*)$ /mvc/index.php/$1 [L]`	-> caso não seja acessado nada, se a condição for falsa, ele ira redirecionar para o index
 
 #
 
