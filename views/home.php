@@ -10,7 +10,7 @@
             <form method="GET" action="<?php echo BASE_URL; ?>">
                 <input type="text" name="busca" id="busca" value="<?php echo(!empty($_GET['busca']))?$_GET['busca']:''; ?>" class="pesq" placeholder="digite o código de barras ou o nome do produto..." style="width: 100%; height:30px; font-size:18px; " />
         
-                <?php echo(!empty($_GET['busca']))?$_GET['busca']:''; ?>
+                <!-- <?php // echo(!empty($_GET['busca']))?$_GET['busca']:''; ?> -->
         
             </form>
         </div>

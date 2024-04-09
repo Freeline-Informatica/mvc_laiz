@@ -13,7 +13,11 @@ class relatorioController extends Controller {
     }
 
     public function index(){
-        $data = array();
+        $data = array(
+            'menu' => array (
+                BASE_URL => 'Voltar'
+            )
+        );
         $p = new Products();
 
         $data['list'] = $p->getLowQuantityProducts();

@@ -18,7 +18,7 @@ class homeController extends Controller {
 
             'menu' => array(
                 BASE_URL.'home/add' => 'Adcionar Produto',
-                BASE_URL.'home/relatorio' => 'Relatório',
+                BASE_URL.'relatorio' => 'Relatório',
                 BASE_URL.'login/sair' => 'Sair'
             )
 

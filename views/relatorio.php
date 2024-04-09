@@ -3,12 +3,12 @@
     <div style="margin: auto;">
         <h1>Relatório</h1>
 
-        <table border="1" width="800">
+        <table border="0" width="100%">
             <tr>
                 <th>Nome do Produto</th>
                 <th>Quantidade</th>
                 <th>Quantidade Miníma</th>
-                <th>Diferença</th>
+                <th>Diferença</th> 
             </tr>
             <?php foreach($list as $item): ?>
                 <tr>
